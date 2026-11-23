@@ -77,6 +77,34 @@
   </style>
 </head>
 <body class="min-h-screen pb-24 relative">
+    <!-- SCHERMATA ACCESSO VIP (CAVEAU POLO NORD) -->
+  <div id="schermata-password" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/95 backdrop-blur-md">
+    <div class="bg-[#FAF5EE] border-2 border-amber-400 rounded-3xl max-w-md w-full p-8 text-center shadow-2xl relative overflow-hidden">
+      <div class="inline-block bg-red-100 text-red-900 text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-4 border border-red-200">
+        🔐 Area Riservata Famiglia
+      </div>
+      <div class="text-5xl mb-3">🎅</div>
+      <h2 class="font-typewriter text-2xl md:text-3xl font-bold text-stone-900 mb-2">
+        Caveau Polo Nord
+      </h2>
+      <p class="text-stone-600 text-sm mb-6 leading-relaxed">
+        Inserisci il <strong>Codice Segreto</strong> riportato sul Pass ufficiale per accedere alla lista desideri 2026.
+      </p>
+
+      <form onsubmit="verificaPassword(event)" class="space-y-3">
+        <input id="input-password" type="text" autocomplete="off" placeholder="Es. NOCALZINI2026"
+               class="w-full text-center font-typewriter uppercase tracking-widest text-lg font-bold px-4 py-3.5 rounded-xl border-2 border-stone-300 focus:border-red-700 focus:outline-none bg-white text-stone-900">
+        <button type="submit"
+                class="w-full py-3.5 px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-95 text-white font-bold text-sm shadow-md transition cursor-pointer">
+          🔓 Sblocca la Lista Desideri
+        </button>
+      </form>
+
+      <p id="errore-password" class="hidden text-red-600 font-bold text-xs mt-3">
+        ❌ Codice errato! Niente calzini di spugna qui dentro. Riprova!
+      </p>
+    </div>
+  </div>
 
   <!-- NEVE SOFFICE IN SOTTOFONDO -->
   <canvas id="snow-canvas"></canvas>
@@ -547,6 +575,31 @@
       requestAnimationFrame(disegnaNeve);
     }
     disegnaNeve();
+    // 8. Controllo Codice Segreto
+    const CODICE_SEGRETO = 'NOCALZINI2026';
+
+    function controllaAccessoSalvato() {
+      if (localStorage.getItem('accesso_natale_2026') === 'ok') {
+        document.getElementById('schermata-password').classList.add('hidden');
+      }
+    }
+
+    function verificaPassword(event) {
+      event.preventDefault();
+      const input = document.getElementById('input-password').value.trim().toUpperCase();
+      const erroreEl = document.getElementById('errore-password');
+
+      if (input === CODICE_SEGRETO) {
+        localStorage.setItem('accesso_natale_2026', 'ok');
+        document.getElementById('schermata-password').classList.add('hidden');
+        erroreEl.classList.add('hidden');
+      } else {
+        erroreEl.classList.remove('hidden');
+        document.getElementById('input-password').classList.add('border-red-500');
+      }
+    }
+
+    controllaAccessoSalvato();
 
     // Avvio iniziale
     caricaRegali();
