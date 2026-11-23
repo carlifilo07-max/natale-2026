@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polo Nord Official Portal 2026 🎄</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF5EE;
+      background-image: radial-gradient(#E6DDD0 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: #1E1E1E;
+      overflow-x: hidden;
+    }
+    .font-typewriter {
+      font-family: 'Courier Prime', monospace;
+    }
+    
+    /* Effetto Hover Card */
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 22px 35px -10px rgba(153, 27, 27, 0.14);
+    }
+
+    /* Animazione Apertura Modale */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-animate {
+      animation: modalFadeIn 0.25s ease-out forwards;
+    }
+
+    /* Ticker scorrevole stile Breaking News Polo Nord */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: flex;
+      width: max-content;
+      animation: marquee 32s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    /* Luci di Natale intermittenti */
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.88); }
+    }
+    .bulb-1 { animation: twinkle 1.8s infinite ease-in-out; }
+    .bulb-2 { animation: twinkle 2.2s infinite ease-in-out 0.6s; }
+    .bulb-3 { animation: twinkle 1.6s infinite ease-in-out 1.1s; }
+    .bulb-4 { animation: twinkle 2.4s infinite ease-in-out 0.3s; }
+
+    /* Neve sullo sfondo */
+    #snow-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 40;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-24 relative">
+
+  <!-- NEVE SOFFICE IN SOTTOFONDO -->
+  <canvas id="snow-canvas"></canvas>
+
+  <!-- BARRA BREAKING NEWS POLO NORD -->
+  <div class="bg-red-900 text-amber-100 text-xs font-typewriter py-2 overflow-hidden border-b-2 border-amber-400/50 relative z-20">
+    <div class="animate-marquee gap-12">
+      <span>🎄 BOLLETTINO UFFICIALE POLO NORD 2026</span>
+      <span>•</span>
+      <span>🚫 ZONA DE-CALZINIZZATA: I CALZINI DI SPUGNA NON SONO PIÙ AMMESSI</span>
+      <span>•</span>
+      <span>📄 ADDIO PDF STATICI: QUI SI PRENOTA IN TEMPO REALE</span>
+      <span>•</span>
+      <span>🏎️ OFFERTA SPECIALE: CHI PRENOTA LA FERRARI 296 GTB VINCE IL POSTO D'ONORE A CAPOTAVOLA</span>
+      <span>•</span>
+      <span>❄️ PREVISIONI METEO: 100% PROBABILITÀ DI FARE UN FIGURONE SOTTO L'ALBERO</span>
+      <span>•</span>
+      <!-- Duplicato per loop continuo -->
+      <span>🎄 BOLLETTINO UFFICIALE POLO NORD 2026</span>
+      <span>•</span>
+      <span>🚫 ZONA DE-CALZINIZZATA: I CALZINI DI SPUGNA NON SONO PIÙ AMMESSI</span>
+      <span>•</span>
+      <span>📄 ADDIO PDF STATICI: QUI SI PRENOTA IN TEMPO REALE</span>
+      <span>•</span>
+      <span>🏎️ OFFERTA SPECIALE: CHI PRENOTA LA FERRARI 296 GTB VINCE IL POSTO D'ONORE A CAPOTAVOLA</span>
+      <span>•</span>
+      <span>❄️ PREVISIONI METEO: 100% PROBABILITÀ DI FARE UN FIGURONE SOTTO L'ALBERO</span>
+      <span>•</span>
+    </div>
+  </div>
+
+  <!-- FILO DI LUCI NATALIZIE DECORATIVE -->
+  <div class="flex justify-around items-center max-w-5xl mx-auto px-4 pt-2 pb-1 opacity-90 select-none" aria-hidden="true">
+    <span class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444] bulb-1"></span>
+    <span class="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] bulb-2"></span>
+    <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] bulb-3"></span>
+    <span class="w-3 h-3 rounded-full bg-sky-400 shadow-[0_0_10px_#38bdf8] bulb-4"></span>
+    <span class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444] bulb-2"></span>
+    <span class="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] bulb-3"></span>
+    <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] bulb-1"></span>
+    <span class="w-3 h-3 rounded-full bg-rose-400 shadow-[0_0_10px_#fb7185] bulb-4"></span>
+    <span class="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] bulb-1"></span>
+    <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] bulb-2"></span>
+    <span class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444] bulb-3"></span>
+  </div>
+
+  <!-- HEADER / HERO SECTION -->
+  <header class="max-w-4xl mx-auto pt-8 pb-6 px-6 text-center relative z-10">
+    <div class="inline-flex items-center gap-2 bg-red-100 text-red-900 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4 border border-red-200 shadow-xs">
+      <span>🎅</span>
+      <span>Lista Desideri Certificata 2026</span>
+      <span>🎄</span>
+    </div>
+
+    <h1 class="font-typewriter text-4xl md:text-6xl font-bold tracking-tight text-stone-900 mb-4">
+      Caro Babbo Natale...
+    </h1>
+
+    <p class="text-stone-600 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+      Basta file PDF stampati storti o regali riciclati all'ultimo minuto: benvenuti nel portale ufficiale. Clicca su una card per le <span class="font-semibold text-stone-900">specifiche anti-errore</span> e <span class="font-semibold text-red-700 underline decoration-red-400 decoration-2">blocca il regalo in diretta</span> prima che lo faccia qualcun altro.
+    </p>
+
+    <!-- CRUSCOTTO DI NATALE (KPI + COUNTDOWN + CONTATORE LIVE) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-3xl mx-auto mt-8 bg-white/95 backdrop-blur-sm p-4 md:p-5 rounded-3xl border-2 border-red-900/10 shadow-md">
+      <div class="p-2">
+        <div class="text-2xl md:text-3xl font-extrabold text-emerald-700">100%</div>
+        <div class="text-xs text-stone-500 font-semibold mt-1">Pranzi in famiglia 🍝</div>
+      </div>
+      <div class="p-2 md:border-l border-stone-100">
+        <div class="text-2xl md:text-3xl font-extrabold text-amber-600">0</div>
+        <div class="text-xs text-stone-500 font-semibold mt-1">Polemiche a tavola 😇</div>
+      </div>
+      <div class="p-2 border-t md:border-t-0 md:border-l border-stone-100">
+        <div id="kpi-prenotati" class="text-2xl md:text-3xl font-extrabold text-red-600">0 / 0</div>
+        <div class="text-xs text-stone-500 font-semibold mt-1">Regali già salvati 🎁</div>
+      </div>
+      <div class="p-2 border-t md:border-t-0 md:border-l border-stone-100">
+        <div id="countdown-natale" class="text-xl md:text-2xl font-extrabold text-stone-900 tabular-nums">--g --h</div>
+        <div class="text-xs text-stone-500 font-semibold mt-1">Alla slitta 🛷</div>
+      </div>
+    </div>
+
+    <!-- AVVISO IRONICO ANTI-ERRORE -->
+    <div class="max-w-3xl mx-auto mt-4 bg-gradient-to-r from-emerald-900 via-emerald-800 to-red-900 text-white rounded-2xl px-5 py-3.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🧝‍♂️</span>
+        <div class="text-xs md:text-sm leading-snug">
+          <span class="font-bold text-amber-300 uppercase tracking-wider block text-[11px]">Garanzia Soddisfatti o Rimborsati:</span>
+          Ogni articolo è stato pre-approvato dal destinatario. Zero rischio di sorrisi forzati scartando il pacco.
+        </div>
+      </div>
+      <span class="shrink-0 bg-white/15 text-amber-200 font-typewriter text-[11px] font-bold px-3 py-1 rounded-full border border-white/20">
+        NO PDF • 100% LIVE
+      </span>
+    </div>
+  </header>
+
+  <!-- BARRA FILTRI RAPIDI -->
+  <section class="max-w-5xl mx-auto px-6 mt-4 mb-6 relative z-10">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200/80 pb-4">
+      <div class="flex flex-wrap gap-2" id="filtri-container">
+        <button onclick="impostaFiltro('tutti')" data-filtro="tutti" class="filtro-btn active px-4 py-2 rounded-full text-xs font-bold bg-stone-900 text-white shadow-xs transition cursor-pointer">
+          🎄 Tutti i desideri
+        </button>
+        <button onclick="impostaFiltro('disponibili')" data-filtro="disponibili" class="filtro-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-stone-700 border border-stone-200 hover:bg-stone-100 transition cursor-pointer">
+          🟢 Ancora liberi
+        </button>
+        <button onclick="impostaFiltro('assegnati')" data-filtro="assegnati" class="filtro-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-stone-700 border border-stone-200 hover:bg-stone-100 transition cursor-pointer">
+          🔒 Già assegnati
+        </button>
+        <button onclick="impostaFiltro('umani')" data-filtro="umani" class="filtro-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-stone-700 border border-stone-200 hover:bg-stone-100 transition cursor-pointer">
+          💸 Budget Umano (&lt; 500 €)
+        </button>
+      </div>
+      <div id="conteggio-visibili" class="text-xs font-typewriter text-stone-500">
+        Caricamento...
+      </div>
+    </div>
+  </section>
+
+  <!-- GRIGLIA CATALOGO HOME -->
+  <main class="max-w-5xl mx-auto px-6 relative z-10">
+    <div id="loading" class="text-center py-16 font-typewriter text-stone-500">
+      🎅 Gli elfi stanno lucidando le vetrine...
+    </div>
+
+    <div id="lista-regali" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 hidden">
+      <!-- Card generate da JS -->
+    </div>
+  </main>
+
+  <!-- FINESTRA MODALE (SCHEDA DETTAGLIO PRODOTTO) -->
+  <div id="modale-prodotto" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-900/70 backdrop-blur-sm" onclick="chiudiModaleSeSfondo(event)">
+    <div id="modale-contenuto" class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-stone-200 relative modal-animate max-h-[90vh] flex flex-col md:flex-row">
+      <!-- Contenuto iniettato dinamicamente -->
+    </div>
+  </div>
+
+  <!-- FOOTER NATALIZIO IRONICO -->
+  <footer class="max-w-4xl mx-auto px-6 mt-20 text-center space-y-2 relative z-10">
+    <div class="text-lg">🎄 ❄️ 🎁 🦌 🎅</div>
+    <p class="text-xs text-stone-500 font-typewriter">
+      Sistema di smistamento automatico v2.6 • Nessun elfo è stato maltrattato per superare il PDF di famiglia
+    </p>
+  </footer>
+
+  <!-- LOGICA JAVASCRIPT -->
+  <script>
+    // 1. INSERISCI QUI LE TUE CHIAVI SUPABASE
+    const SUPABASE_URL = 'https://uubsfipjgjtxhwgvoiru.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_GU0aobUXlPi3q1S7sm5QbA_f5tWnXjV';
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let elencoRegali = [];
+    let filtroAttivo = 'tutti';
+
+    // Etichette simpatiche automatiche in base al contenuto
+    function ottieniTagSimpatico(regalo) {
+      const testo = (regalo.titolo + ' ' + (regalo.prezzo || '')).toLowerCase();
+      if (testo.includes('ferrari') || testo.includes('285')) return '👑 Sogno Proibito';
+      if (testo.includes('sci') || testo.includes('guanti') || testo.includes('maschera')) return '⛷️ Kit Neve';
+      if (testo.includes('action') || testo.includes('dji')) return '🎬 Regia & Action';
+      if (testo.includes('magsafe') || testo.includes('iphone') || testo.includes('baseus')) return '⚡ Combo Tech';
+      if (testo.includes('bburago') || testo.includes('1:24')) return '🏎️ Scuderia';
+      return '🎁 Top Wish';
+    }
+
+    // Estrae il valore numerico dal prezzo per il filtro "Budget Umano"
+    function estraiNumeroPrezzo(prezzoStr) {
+      if (!prezzoStr) return 0;
+      const pulito = prezzoStr.replace(/[^\d,.-]/g, '').replace('.', '').replace(',', '.');
+      return parseFloat(pulito) || 0;
+    }
+
+    // 2. Carica i dati da Supabase
+    async function caricaRegali() {
+      const { data, error } = await db
+        .from('regali')
+        .select('*')
+        .order('id', { ascending: true });
+
+      const loadingEl = document.getElementById('loading');
+      const container = document.getElementById('lista-regali');
+
+      if (error) {
+        loadingEl.innerHTML = `<span class="text-red-600">Errore di connessione al database. Controlla URL e Key!</span>`;
+        console.error(error);
+        return;
+      }
+
+      elencoRegali = data;
+      
+      // Aggiorna contatore KPI live
+      const totale = elencoRegali.length;
+      const bloccati = elencoRegali.filter(r => r.bloccato).length;
+      document.getElementById('kpi-prenotati').textContent = `${bloccati} /${totale}`;
+
+      loadingEl.classList.add('hidden');
+      container.classList.remove('hidden');
+      renderizzaGriglia();
+    }
+
+    // 3. Disegna la griglia applicando il filtro selezionato
+    function renderizzaGriglia() {
+      const container = document.getElementById('lista-regali');
+      container.innerHTML = '';
+
+      const filtrati = elencoRegali.filter(r => {
+        if (filtroAttivo === 'disponibili') return !r.bloccato;
+        if (filtroAttivo === 'assegnati') return r.bloccato;
+        if (filtroAttivo === 'umani') return estraiNumeroPrezzo(r.prezzo) < 500;
+        return true;
+      });
+
+      document.getElementById('conteggio-visibili').textContent = `Visualizzati: ${filtrati.length} su${elencoRegali.length}`;
+
+      if (filtrati.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-stone-200 p-6">
+            <div class="text-3xl mb-2">🎅</div>
+            <p class="font-bold text-stone-800">Nessun regalo in questa categoria!</p>
+            <p class="text-xs text-stone-500 mt-1">Prova a cambiare filtro qui sopra per vedere gli altri desideri.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtrati.forEach((regalo) => {
+        // Mantiene il numero originale della lista completa
+        const indiceReale = elencoRegali.findIndex(item => item.id === regalo.id);
+        const numero = String(indiceReale + 1).padStart(2, '0');
+        const isBloccato = regalo.bloccato;
+        const isFerrari = estraiNumeroPrezzo(regalo.prezzo) > 10000;
+        const tagSimpatico = ottieniTagSimpatico(regalo);
+
+        const cardHTML = `
+          <article onclick="apriModale(${regalo.id})" 
+                   class="group cursor-pointer relative bg-white rounded-3xl overflow-hidden border-2 ${isFerrari && !isBloccato ? 'border-amber-400 ring-4 ring-amber-400/15' : 'border-stone-200/90'} card-hover flex flex-col">
+            
+            <!-- BADGE STATO IN ALTO A DESTRA -->
+            ${isBloccato ? `
+              <div class="absolute top-3.5 right-3.5 z-10 bg-stone-900/90 backdrop-blur-sm text-white font-sans text-[11px] font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wider">
+                🔒 Assegnato
+              </div>
+            ` : `
+              <div class="absolute top-3.5 right-3.5 z-10 bg-white/95 backdrop-blur-sm text-emerald-800 border border-emerald-200 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
+                ● Disponibile
+              </div>
+            `}
+
+            <!-- TAG CATEGORIA IN ALTO A SINISTRA -->
+            <div class="absolute top-3.5 left-3.5 z-10 bg-stone-900/75 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+              ${tagSimpatico}
+            </div>
+
+            <!-- IMMAGINE GRANDE -->
+            <div class="relative h-64 bg-stone-100 overflow-hidden">
+              <img src="${regalo.foto_url}" alt="${regalo.titolo}" 
+                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isBloccato ? 'grayscale opacity-70' : ''}">
+              
+              <!-- BADGE PREZZO CON FONT PULITO -->
+              <div class="absolute bottom-3 left-3 ${isFerrari ? 'bg-amber-400 text-stone-950' : 'bg-white/95 text-stone-900'} backdrop-blur-sm font-sans font-extrabold text-xs px-3 py-1.5 rounded-xl shadow-sm">
+                #${numero}${regalo.prezzo ? `• ${regalo.prezzo}` : ''}
+              </div>
+            </div>
+
+            <!-- TITOLO E INVITO AL CLIC -->
+            <div class="p-5 flex-1 flex flex-col justify-between bg-white">
+              <h2 class="text-lg font-extrabold text-stone-900 group-hover:text-red-700 transition-colors leading-snug">
+                ${regalo.titolo}
+              </h2>
+              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-bold ${isBloccato ? 'text-stone-400' : 'text-red-700'}">
+                <span>${isBloccato ? 'Vedi dettagli prenotazione' : 'Apri scheda & blocca'}</span>
+                <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+              </div>
+            </div>
+          </article>
+        `;
+
+        container.innerHTML += cardHTML;
+      });
+    }
+
+    function impostaFiltro(nuovoFiltro) {
+      filtroAttivo = nuovoFiltro;
+      document.querySelectorAll('.filtro-btn').forEach(btn => {
+        if (btn.dataset.filtro === nuovoFiltro) {
+          btn.className = 'filtro-btn active px-4 py-2 rounded-full text-xs font-bold bg-stone-900 text-white shadow-xs transition cursor-pointer';
+        } else {
+          btn.className = 'filtro-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-stone-700 border border-stone-200 hover:bg-stone-100 transition cursor-pointer';
+        }
+      });
+      renderizzaGriglia();
+    }
+
+// 4. Apre la finestra modale con scheda completa
+    function apriModale(id) {
+      const regalo = elencoRegali.find(r => r.id === id);
+      if (!regalo) return;
+
+      const isBloccato = regalo.bloccato;
+      const modale = document.getElementById('modale-prodotto');
+      const contenuto = document.getElementById('modale-contenuto');
+
+      contenuto.innerHTML = `
+        <button onclick="chiudiModale()" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold shadow-sm transition cursor-pointer">
+          ✕
+        </button>
+
+        <!-- COLONNA SINISTRA: FOTO -->
+        <div class="md:w-1/2 bg-stone-100 relative min-h-[260px] md:min-h-[430px]">
+          <img src="${regalo.foto_url}" alt="${regalo.titolo}" class="w-full h-full object-cover ${isBloccato ? 'grayscale' : ''}">
+          ${regalo.prezzo ? `
+            <div class="absolute bottom-4 left-4 bg-stone-900 text-white font-sans font-bold text-sm px-4 py-1.5 rounded-xl shadow-md">
+              Budget stimato: ${regalo.prezzo}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- COLONNA DESTRA: SCHEDA DETTAGLIATA -->
+        <div class="md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto">
+          <div>
+            <div class="mb-3 flex flex-wrap gap-2 items-center">
+              ${isBloccato ? `
+                <span class="inline-block bg-stone-900 text-white font-sans text-xs font-bold px-3 py-1 rounded-full uppercase">
+                  🔒 Già Assegnato a un Elfo
+                </span>
+              ` : `
+                <span class="inline-block bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1 rounded-full">
+                  ● Disponibile per la prenotazione
+                </span>
+              `}
+            </div>
+
+            <h2 class="text-2xl font-extrabold text-stone-900 leading-tight mb-4">
+              ${regalo.titolo}
+            </h2>
+
+            <p class="text-stone-600 text-sm md:text-base leading-relaxed mb-6">
+              ${regalo.descrizione || 'Nessuna descrizione aggiuntiva.'}
+            </p>
+
+            ${regalo.specifiche ? `
+              <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
+                <span class="font-bold uppercase tracking-wider block text-[11px] text-amber-800 mb-1">
+                  ⚠️ Specifiche Anti-Errore:
+                </span>
+                <p class="text-xs md:text-sm text-amber-950 font-medium leading-relaxed">
+                  ${regalo.specifiche}
+                </p>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- BOTTONI AZIONE -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-stone-100">
+            ${regalo.link ? `
+              <a href="${regalo.link}" target="_blank" rel="noopener noreferrer" 
+                 class="flex-1 text-center py-3.5 px-4 rounded-xl border border-stone-300 text-stone-800 font-bold text-sm hover:bg-stone-50 transition">
+                Vai al negozio ↗
+              </a>
+            ` : ''}
+
+            ${isBloccato ? `
+              <button disabled class="flex-1 py-3.5 px-4 rounded-xl bg-stone-200 text-stone-500 font-bold text-sm cursor-not-allowed">
+                Già Bloccato
+              </button>
+            ` : `
+              <button onclick="bloccaRegalo(${regalo.id}, '${regalo.titolo.replace(/'/g, "\\'")}')" 
+                      class="flex-1 py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-sm shadow-md transition cursor-pointer">
+                🎁 Blocca regalo
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+
+      modale.classList.remove('hidden');
+      modale.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function chiudiModale() {
+      const modale = document.getElementById('modale-prodotto');
+      modale.classList.add('hidden');
+      modale.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function chiudiModaleSeSfondo(event) {
+      if (event.target.id === 'modale-prodotto') chiudiModale();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') chiudiModale();
+    });
+
+    // 5. Blocca il regalo su Supabase
+    async function bloccaRegalo(id, titolo) {
+      const conferma = confirm(`🎅 Confermi di voler prenotare "${titolo}"?\n\nUna volta bloccato, il regalo risulterà assegnato per tutta la famiglia (e ti guadagnerai eterna riconoscenza).`);
+      if (!conferma) return;
+
+      const { error } = await db
+        .from('regali')
+        .update({ bloccato: true })
+        .eq('id', id);
+
+      if (error) {
+        alert('Ops, qualcosa è andato storto nel blocco. Riprova!');
+        console.error(error);
+      } else {
+        await caricaRegali();
+        apriModale(id);
+      }
+    }
+
+    // 6. Countdown live al 25 Dicembre
+    function aggiornaCountdown() {
+      const ora = new Date();
+      let natale = new Date(ora.getFullYear(), 11, 25, 0, 0, 0);
+      if (ora > natale) natale = new Date(ora.getFullYear() + 1, 11, 25, 0, 0, 0);
+      
+      const diff = natale - ora;
+      const giorni = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const ore = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minuti = Math.floor((diff / 1000 / 60) % 60);
+      
+      document.getElementById('countdown-natale').textContent = `${giorni}g ${ore}h ${minuti}m`;
+    }
+    aggiornaCountdown();
+    setInterval(aggiornaCountdown, 30000);
+
+    // 7. Effetto Neve leggero e non invasivo
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const fiocchi = Array.from({ length: 45 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2.8 + 1.2,
+      d: Math.random() * 0.8 + 0.3,
+      vx: (Math.random() - 0.5) * 0.4
+    }));
+
+    function disegnaNeve() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(214, 205, 194, 0.65)';
+      ctx.beginPath();
+      for (const f of fiocchi) {
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      for (const f of fiocchi) {
+        f.y += f.d;
+        f.x += f.vx;
+        if (f.y > height) { f.y = -5; f.x = Math.random() * width; }
+        if (f.x > width) f.x = 0;
+        if (f.x < 0) f.x = width;
+      }
+      requestAnimationFrame(disegnaNeve);
+    }
+    disegnaNeve();
+
+    // Avvio iniziale
+    caricaRegali();
+  </script>
+</body>
+</html>
